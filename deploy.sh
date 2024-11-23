@@ -47,12 +47,22 @@ function configure_verifier() {
         return
     fi
 
-    # 下载验证器脚本
+    # 下载验证器安装脚本
     curl -L https://github.com/cysic-labs/phase2_libs/releases/download/v1.0.0/setup_linux.sh -o ~/setup_linux.sh
+    if [[ $? -ne 0 ]]; then
+        echo "验证器安装脚本下载失败，请检查网络连接！"
+        return
+    fi
+
     chmod +x ~/setup_linux.sh
 
-    # 自动化运行并传递 EVM 地址参数
+    # 运行安装脚本并传递 EVM 地址
+    echo "正在执行验证器安装脚本..."
     bash ~/setup_linux.sh "$evm_address"
+    if [[ $? -ne 0 ]]; then
+        echo "验证器配置失败，请检查安装脚本日志！"
+        return
+    fi
 
     echo "验证器配置完成！"
 }
@@ -86,7 +96,7 @@ function create_user() {
         echo "用户 $new_user 已存在！"
         return
     fi
-    sudo adduser --gecos "" --disabled-password "$new_user"
+    sudo adduser "$new_user"
     echo "用户 $new_user 创建成功！"
 }
 
